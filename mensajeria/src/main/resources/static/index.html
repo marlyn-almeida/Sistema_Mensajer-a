@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat en Línea</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div class="container">
+    <div class="register-screen">
+        <h1>Bienvenido al Chat</h1>
+        <p>Por favor ingresa tu nombre de usuario</p>
+        <input type="text" id="username" placeholder="Nombre de usuario" required>
+        <button id="register-btn" onclick="registerUser()">Registrarse</button>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/dist/stomp.min.js"></script>
+<script src="js/chat.js"></script>
+</body>
+</html>
