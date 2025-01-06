@@ -1,14 +1,30 @@
 package com.example.mensajeria.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "usuarios") // Define la colección en MongoDB
 public class Usuario {
 
+    @Id
+    private String id;
     private String nombre;
-    private String correo;
+    private String username;
 
-    // Constructor, getters y setters
-    public Usuario(String nombre, String correo) {
+    public Usuario() {}
+
+    public Usuario(String nombre, String username) {
         this.nombre = nombre;
-        this.correo = correo;
+        this.username = username;
+    }
+
+    // Getters y setters
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -19,11 +35,11 @@ public class Usuario {
         this.nombre = nombre;
     }
 
-    public String getCorreo() {
-        return correo;
+    public String getUsername() {
+        return username;
     }
 
-    public void setCorreo(String correo) {
-        this.correo = correo;
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

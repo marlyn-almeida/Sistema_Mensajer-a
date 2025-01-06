@@ -1,24 +1,30 @@
 package com.example.mensajeria.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
 import com.example.mensajeria.model.Mensaje;
-import com.example.mensajeria.service.MensajeService;
+import com.example.mensajeria.repository.MensajeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/mensajes")
 public class MensajeController {
 
     @Autowired
-    private MensajeService mensajeService;
+    private MensajeRepository mensajeRepository;
 
-    // Recibe un mensaje del cliente y lo reenvía a todos los clientes suscritos
-    @MessageMapping("/send") // Se invoca cuando el cliente envía un mensaje
-    @SendTo("/topic/messages") // Todos los clientes suscritos recibirán el mensaje
-    public Mensaje sendMessage(Mensaje mensaje) {
-        // Aquí puedes guardar el mensaje en la base de datos si es necesario
-        mensajeService.saveMensaje(mensaje);
-        return mensaje;
+    // Obtener todos los mensajes
+    @GetMapping
+    public List<Mensaje> getAllMensajes() {
+        return mensajeRepository.findAll();
+    }
+
+    // Enviar un mensaje
+    @PostMapping
+    public Mensaje createMensaje(@RequestBody Mensaje mensaje) {
+        // Configura la fecha y hora de envío antes de guardar
+        mensaje.setFechaEnvio(java.time.LocalDateTime.now());
+        return mensajeRepository.save(mensaje);
     }
 }
