@@ -1,25 +1,26 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Para redirigir después de login o registro
 import './Login.css';
-import { useNavigate } from 'react-router-dom';
-
 
 function Login({ onRegister }) {
     const [nombre, setNombre] = useState('');
     const [username, setUsername] = useState('');
-    const navigate = useNavigate(); // Redirección
+    const [isLogin, setIsLogin] = useState(true); // Para saber si mostrar el formulario de login o registro
+    const navigate = useNavigate(); // Hook para navegación
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!nombre || !username) {
-            alert("Por favor, complete ambos campos.");
+        if (!username) {
+            alert("Por favor, ingrese su nombre de usuario.");
             return;
         }
 
         const usuario = { nombre, username };
 
         try {
-            const response = await fetch('http://localhost:8080/api/usuarios', {
+            const endpoint = isLogin ? '/api/usuarios/login' : '/api/usuarios/register';
+            const response = await fetch(`http://localhost:8080${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -29,11 +30,12 @@ function Login({ onRegister }) {
 
             if (response.ok) {
                 const data = await response.json();
-                onRegister(data.username);  // Pasa el nombre de usuario al padre (App)
-                alert("Usuario registrado exitosamente");
-                navigate("/salas"); // Redirige a la pantalla de salas
+                onRegister(data.username); // Actualiza el estado del usuario en la App
+                navigate('/salas'); // Redirige a las salas
+            } else if (response.status === 400) {
+                alert("Usuario no encontrado o datos inválidos.");
             } else {
-                alert("Error al registrar el usuario");
+                alert("Error en la comunicación con el servidor.");
             }
         } catch (error) {
             console.error("Error al hacer la solicitud:", error);
@@ -43,22 +45,49 @@ function Login({ onRegister }) {
 
     return (
         <div className="login-container">
-            <h1>Registrarse</h1>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="Nombre"
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
-                />
-                <input
-                    type="text"
-                    placeholder="Nombre de usuario"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
-                <button type="submit">Registrarse</button>
-            </form>
+            <h1>{isLogin ? "Iniciar Sesión" : "Registrarse"}</h1>
+
+            {/* Formulario de Login */}
+            {isLogin ? (
+                <form onSubmit={handleSubmit}>
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <button type="submit">Iniciar sesión</button>
+                    <p>
+                        ¿No tienes cuenta?{' '}
+                        <span onClick={() => setIsLogin(false)} style={{ cursor: 'pointer', color: 'blue' }}>
+                            Regístrate aquí
+                        </span>
+                    </p>
+                </form>
+            ) : (
+                // Formulario de Registro
+                <form onSubmit={handleSubmit}>
+                    <input
+                        type="text"
+                        placeholder="Nombre "
+                        value={nombre}
+                        onChange={(e) => setNombre(e.target.value)}
+                    />
+                    <input
+                        type="text"
+                        placeholder="Nombre de usuario"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                    <button type="submit">Registrarse</button>
+                    <p>
+                        ¿Ya tienes cuenta?{' '}
+                        <span onClick={() => setIsLogin(true)} style={{ cursor: 'pointer', color: 'blue' }}>
+                            Inicia sesión aquí
+                        </span>
+                    </p>
+                </form>
+            )}
         </div>
     );
 }
