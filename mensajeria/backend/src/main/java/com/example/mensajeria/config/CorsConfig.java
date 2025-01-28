@@ -11,7 +11,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")  // Permite todas las rutas
-                .allowedOrigins("http://localhost:3005")  // Tu frontend en el puerto 3005
+                .allowedOrigins("*")  // Tu frontend en el puerto 3005
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);  // Habilitar las credenciales (cookies, autenticación, etc.)
